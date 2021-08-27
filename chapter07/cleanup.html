@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content=
+    "application/xhtml+xml; charset=iso-8859-1" />
+    <title>
+      7.14.&nbsp;Cleaning up and Saving the Temporary System
+    </title>
+    <link rel="stylesheet" type="text/css" href="../stylesheets/lfs.css" />
+    <meta name="generator" content="DocBook XSL-NS Stylesheets Vsnapshot" />
+    <link rel="stylesheet" href="../stylesheets/lfs-print.css" type=
+    "text/css" media="print" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="lfs" id="lfs-11.0-rc3">
+    <div class="navheader">
+      <h4>
+        Linux From Scratch - Version 11.0-rc3
+      </h4>
+      <h3>
+        Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional
+        Temporary Tools
+      </h3>
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="util-linux.html" title=
+          "Util-linux-2.37.2">Prev</a>
+          <p>
+            Util-linux-2.37.2
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="../part4.html" title=
+          "Building the LFS System">Next</a>
+          <p>
+            Building the LFS System
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter07.html" title=
+          "Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional Temporary Tools">
+          Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <h1 class="sect1">
+        <a id="ch-tools-cleanup" name="ch-tools-cleanup"></a>7.14. Cleaning
+        up and Saving the Temporary System
+      </h1>
+      <div class="sect2" lang="en" xml:lang="en">
+        <h2 class="sect2">
+          7.14.1. Cleaning
+        </h2>
+        <p>
+          First, remove the currently installed documentation to prevent them
+          from ending up in the final system, and to save about 35 MB:
+        </p>
+        <pre class="userinput"><kbd class=
+        "command">rm -rf /usr/share/{info,man,doc}/*</kbd></pre>
+        <p>
+          Second, the libtool .la files are only useful when linking with
+          static libraries. They are unneeded and potentially harmful when
+          using dynamic shared libraries, specially when using non-autotools
+          build systems. While still in chroot, remove those files now:
+        </p>
+        <pre class="userinput"><kbd class=
+        "command">find /usr/{lib,libexec} -name \*.la -delete</kbd></pre>
+        <p>
+          The current system size is now about 3 GB, however the /tools
+          directory is no longer needed. It uses about 1 GB of disk space.
+          Delete it now:
+        </p>
+        <pre class="userinput"><kbd class="command">rm -rf /tools</kbd></pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <h2 class="sect2">
+          7.14.2. Backup
+        </h2>
+        <div class="admon note">
+          <img alt="[Note]" src="../images/note.png" />
+          <h3>
+            Note
+          </h3>
+          <p>
+            All the remaining steps in this section are optional.
+            Nevertheless, as soon as you begin installing packages in
+            <a class="xref" href="../chapter08/chapter08.html" title=
+            "Chapter&nbsp;8.&nbsp;Installing Basic System Software">Chapter&nbsp;8</a>,
+            the temporary files will be overwritten. So it may be a good idea
+            to do a backup of the current system as described below.
+          </p>
+        </div>
+        <p>
+          The following steps are performed from outside the chroot
+          environment. That means, you have to leave the chroot environment
+          first before continuing. The reason for that is to get access to
+          file system locations outside of the chroot environment to
+          store/read the backup archive which should not be placed within the
+          <code class="filename">$LFS</code> hierarchy for safety reasons.
+        </p>
+        <div class="admon important">
+          <img alt="[Important]" src="../images/important.png" />
+          <h3>
+            Important
+          </h3>
+          <p>
+            All of the following instructions are executed by <code class=
+            "systemitem">root</code>. Take extra care about the commands
+            you're going to run as mistakes here can modify your host system.
+            Be aware that the environment variable <code class=
+            "envar">LFS</code> is set for user <code class=
+            "systemitem">lfs</code> by default but may <span class=
+            "emphasis"><em>not</em></span> be set for <code class=
+            "systemitem">root</code>. Whenever commands are to be executed by
+            <code class="systemitem">root</code>, make sure you have set
+            <code class="envar">LFS</code>. This has been discussed in
+            <a class="xref" href="../chapter02/aboutlfs.html" title=
+            "2.6.&nbsp;Setting The $LFS Variable">Section&nbsp;2.6,
+            &ldquo;Setting The $LFS Variable&rdquo;</a>.
+          </p>
+        </div>
+        <p>
+          Now, if you are making a backup, leave the chroot environment:
+        </p>
+        <pre class="userinput"><kbd class="command">exit</kbd></pre>
+        <p>
+          At this point the essential programs and libraries have been
+          created and your current system is in a good state. Your system can
+          now be backed up for later reuse. In case of fatal failures in the
+          subsequent chapters, it often turns out that removing everything
+          and starting over (more carefully) is the best option to recover.
+          Unfortunately, all the temporary files will be removed, too. To
+          avoid spending extra time to redo something which has been built
+          successfully, prepare a backup.
+        </p>
+        <p>
+          Make sure you have at least 1 GB free disk space (the source
+          tarballs will be included in the backup archive) in the home
+          directory of user <code class="systemitem">root</code>.
+        </p>
+        <p>
+          Before we make a backup, unmount the virtual file systems:
+        </p>
+        <pre class="userinput"><kbd class="command">umount $LFS/dev{/pts,}
+umount $LFS/{sys,proc,run}</kbd></pre>
+        <p>
+          Create the backup archive by running the following command:
+        </p>
+        <div class="admon note">
+          <img alt="[Note]" src="../images/note.png" />
+          <h3>
+            Note
+          </h3>
+          <p>
+            Because the backup archive is compressed, it takes a relatively
+            long time (over 10 minutes) even on a resonably fast system.
+          </p>
+          <p>
+            Also, ensure the <code class="envar">LFS</code> environment
+            variable is set for the root user.
+          </p>
+        </div>
+        <pre class="userinput"><kbd class="command">cd $LFS 
+tar -cJpf $HOME/lfs-temp-tools-11.0-rc3.tar.xz .</kbd></pre>
+        <p>
+          Replace <code class="envar">$HOME</code> by a directory of your
+          choice if you do not want to have the backup stored in <code class=
+          "systemitem">root</code>'s home directory.
+        </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <h2 class="sect2">
+          7.14.3. Restore
+        </h2>
+        <p>
+          In case some mistakes have been made and you need to start over,
+          you can use this backup to restore the system and save some
+          recovery time. Since the sources are located under <code class=
+          "filename">$LFS</code>, they are included in the backup archive as
+          well, so they do not need to be downloaded again. After checking
+          that <code class="envar">$LFS</code> is set properly, restore the
+          backup by executing the following commands:
+        </p>
+        <div class="admon warning">
+          <img alt="[Warning]" src="../images/warning.png" />
+          <h3>
+            Warning
+          </h3>
+          <p>
+            The following commands are extremly dangerous. If you run
+            <span class="command"><strong>rm -rf ./*</strong></span> as the
+            root user and you do not change to the $LFS directory or the
+            <code class="envar">LFS</code> environment variable is not set
+            for the root user, it will destroy your entire host system. YOU
+            ARE WARNED.
+          </p>
+        </div>
+        <pre class="screen"><code class="computeroutput">cd $LFS 
+rm -rf ./* 
+tar -xpf $HOME/lfs-temp-tools-11.0-rc3.tar.xz</code></pre>
+        <p>
+          Again, double check that the environment has been setup properly
+          and continue building the rest of the system.
+        </p>
+        <div class="admon important">
+          <img alt="[Important]" src="../images/important.png" />
+          <h3>
+            Important
+          </h3>
+          <p>
+            If you left the chroot environment to create a backup or restart
+            building using a restore, remember to check that the virtual
+            filesystems are still mounted (<span class=
+            "command"><strong>findmnt | grep $LFS</strong></span>). If they
+            are not mounted, remount them now as described in <a class="xref"
+            href="kernfs.html" title=
+            "7.3.&nbsp;Preparing Virtual Kernel File Systems">Section&nbsp;7.3,
+            &ldquo;Preparing Virtual Kernel File Systems&rdquo;</a> and
+            re-enter the chroot environment (see <a class="xref" href=
+            "chroot.html" title=
+            "7.4.&nbsp;Entering the Chroot Environment">Section&nbsp;7.4,
+            &ldquo;Entering the Chroot Environment&rdquo;</a>) before
+            continuing.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="util-linux.html" title=
+          "Util-linux-2.37.2">Prev</a>
+          <p>
+            Util-linux-2.37.2
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="../part4.html" title=
+          "Building the LFS System">Next</a>
+          <p>
+            Building the LFS System
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter07.html" title=
+          "Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional Temporary Tools">
+          Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

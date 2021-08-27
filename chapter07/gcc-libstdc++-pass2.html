@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content=
+    "application/xhtml+xml; charset=iso-8859-1" />
+    <title>
+      7.7.&nbsp;Libstdc++ from GCC-11.2.0, Pass 2
+    </title>
+    <link rel="stylesheet" type="text/css" href="../stylesheets/lfs.css" />
+    <meta name="generator" content="DocBook XSL-NS Stylesheets Vsnapshot" />
+    <link rel="stylesheet" href="../stylesheets/lfs-print.css" type=
+    "text/css" media="print" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="lfs" id="lfs-11.0-rc3">
+    <div class="navheader">
+      <h4>
+        Linux From Scratch - Version 11.0-rc3
+      </h4>
+      <h3>
+        Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional
+        Temporary Tools
+      </h3>
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="createfiles.html" title=
+          "Creating Essential Files and Symlinks">Prev</a>
+          <p>
+            Creating Essential Files and Symlinks
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="gettext.html" title="Gettext-0.21">Next</a>
+          <p>
+            Gettext-0.21
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter07.html" title=
+          "Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional Temporary Tools">
+          Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+    <div class="wrap" lang="en" xml:lang="en">
+      <h1 class="sect1">
+        <a id="ch-tools-libstdcpp-pass2" name=
+        "ch-tools-libstdcpp-pass2"></a>7.7. Libstdc++ from GCC-11.2.0, Pass 2
+      </h1>
+      <div class="package" lang="en" xml:lang="en">
+        <p>
+          When building <a class="xref" href="../chapter06/gcc-pass2.html"
+          title="6.18.&nbsp;GCC-11.2.0 - Pass 2">gcc-pass2</a> we had to
+          defer the installation of the C++ standard library because no
+          suitable compiler was available to compile it. We could not use the
+          compiler built in that section because it is a native compiler and
+          should not be used outside of chroot and risks polluting the
+          libraries with some host components.
+        </p>
+        <div class="segmentedlist">
+          <div class="seglistitem">
+            <div class="seg">
+              <strong class="segtitle">Approximate build time:</strong>
+              <span class="segbody">0.8 SBU</span>
+            </div>
+            <div class="seg">
+              <strong class="segtitle">Required disk space:</strong>
+              <span class="segbody">1.1 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="installation" lang="en" xml:lang="en">
+        <h2 class="sect2">
+          7.7.1. Installation of Target Libstdc++
+        </h2>
+        <div class="admon note">
+          <img alt="[Note]" src="../images/note.png" />
+          <h3>
+            Note
+          </h3>
+          <p>
+            <span class="application">Libstdc++</span> is part of the GCC
+            sources. You should first unpack the GCC tarball and change to
+            the <code class="filename">gcc-11.2.0</code> directory.
+          </p>
+        </div>
+        <p>
+          Create a link which exists when building libstdc++ in the gcc tree:
+        </p>
+        <pre class="userinput"><kbd class=
+        "command">ln -s gthr-posix.h libgcc/gthr-default.h</kbd></pre>
+        <p>
+          Create a separate build directory for libstdc++ and enter it:
+        </p>
+        <pre class="userinput"><kbd class="command">mkdir -v build
+cd       build</kbd></pre>
+        <p>
+          Prepare libstdc++ for compilation:
+        </p>
+        <pre class="userinput"><kbd class=
+        "command">../libstdc++-v3/configure            \
+    CXXFLAGS="-g -O2 -D_GNU_SOURCE"  \
+    --prefix=/usr                    \
+    --disable-multilib               \
+    --disable-nls                    \
+    --host=$(uname -m)-lfs-linux-gnu \
+    --disable-libstdcxx-pch</kbd></pre>
+        <div class="variablelist">
+          <p class="title">
+            <strong>The meaning of the configure options:</strong>
+          </p>
+          <dl class="variablelist">
+            <dt>
+              <span class="term"><em class="parameter"><code>CXXFLAGS="-g -O2
+              -D_GNU_SOURCE"</code></em></span>
+            </dt>
+            <dd>
+              <p>
+                These flags are passed by the top level Makefile when doing a
+                full build of GCC.
+              </p>
+            </dd>
+            <dt>
+              <span class="term"><em class="parameter"><code>--host=$(uname
+              -m)-lfs-linux-gnu</code></em></span>
+            </dt>
+            <dd>
+              <p>
+                We have to mimic what would happen if this package were built
+                as part of a full compiler build. This switch would be passed
+                to configure by GCC's build machinery.
+              </p>
+            </dd>
+            <dt>
+              <span class="term"><em class=
+              "parameter"><code>--disable-libstdcxx-pch</code></em></span>
+            </dt>
+            <dd>
+              <p>
+                This switch prevents the installation of precompiled include
+                files, which are not needed at this stage.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <p>
+          Compile libstdc++ by running:
+        </p>
+        <pre class="userinput"><kbd class="command">make</kbd></pre>
+        <p>
+          Install the library:
+        </p>
+        <pre class="userinput"><kbd class="command">make install</kbd></pre>
+      </div>
+      <div class="content" lang="en" xml:lang="en">
+        <p>
+          Details on this package are located in <a class="xref" href=
+          "../chapter08/gcc.html#contents-gcc" title=
+          "8.26.2.&nbsp;Contents of GCC">Section&nbsp;8.26.2, &ldquo;Contents
+          of GCC.&rdquo;</a>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="createfiles.html" title=
+          "Creating Essential Files and Symlinks">Prev</a>
+          <p>
+            Creating Essential Files and Symlinks
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="gettext.html" title="Gettext-0.21">Next</a>
+          <p>
+            Gettext-0.21
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter07.html" title=
+          "Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional Temporary Tools">
+          Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

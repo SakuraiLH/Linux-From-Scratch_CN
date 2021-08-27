@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content=
+    "application/xhtml+xml; charset=iso-8859-1" />
+    <title>
+      4.2.&nbsp;Creating a limited directory layout in LFS filesystem
+    </title>
+    <link rel="stylesheet" type="text/css" href="../stylesheets/lfs.css" />
+    <meta name="generator" content="DocBook XSL-NS Stylesheets Vsnapshot" />
+    <link rel="stylesheet" href="../stylesheets/lfs-print.css" type=
+    "text/css" media="print" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="lfs" id="lfs-11.0-rc3">
+    <div class="navheader">
+      <h4>
+        Linux From Scratch - Version 11.0-rc3
+      </h4>
+      <h3>
+        Chapter&nbsp;4.&nbsp;Final Preparations
+      </h3>
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="introduction.html" title=
+          "Introduction">Prev</a>
+          <p>
+            Introduction
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="addinguser.html" title=
+          "Adding the LFS User">Next</a>
+          <p>
+            Adding the LFS User
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter04.html" title=
+          "Chapter&nbsp;4.&nbsp;Final Preparations">Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <h1 class="sect1">
+        <a id="ch-tools-creatingminlayout" name=
+        "ch-tools-creatingminlayout"></a>4.2. Creating a limited directory
+        layout in LFS filesystem
+      </h1>
+      <p>
+        The first task performed in the LFS partition is to create a limited
+        directory hierarchy so that programs compiled in <a class="xref"
+        href="../chapter06/chapter06.html" title=
+        "Chapter&nbsp;6.&nbsp;Cross Compiling Temporary Tools">Chapter&nbsp;6</a>
+        (as well as glibc and libstdc++ in <a class="xref" href=
+        "../chapter05/chapter05.html" title=
+        "Chapter&nbsp;5.&nbsp;Compiling a Cross-Toolchain">Chapter&nbsp;5</a>)
+        may be installed in their final location. This is needed so that
+        those temporary programs be overwritten when rebuilding them in
+        <a class="xref" href="../chapter08/chapter08.html" title=
+        "Chapter&nbsp;8.&nbsp;Installing Basic System Software">Chapter&nbsp;8</a>.
+      </p>
+      <p>
+        Create the required directory layout by running the following as
+        <code class="systemitem">root</code>:
+      </p>
+      <pre class="userinput"><kbd class=
+      "command">mkdir -pv $LFS/{etc,var} $LFS/usr/{bin,lib,sbin}
+
+for i in bin lib sbin; do
+  ln -sv usr/$i $LFS/$i
+done
+
+case $(uname -m) in
+  x86_64) mkdir -pv $LFS/lib64 ;;
+esac</kbd></pre>
+      <div class="admon note">
+        <img alt="[Note]" src="../images/note.png" />
+        <h3>
+          Note
+        </h3>
+        <p>
+          The above command is correct. The <span class=
+          "command"><strong>ln</strong></span> command has a few syntactic
+          versions, so be sure to check <span class="command"><strong>info
+          coreutils ln</strong></span> and <code class=
+          "filename">ln(1)</code> before reporting what you may think is an
+          error.
+        </p>
+      </div>
+      <p>
+        Programs in <a class="xref" href="../chapter06/chapter06.html" title=
+        "Chapter&nbsp;6.&nbsp;Cross Compiling Temporary Tools">Chapter&nbsp;6</a>
+        will be compiled with a cross-compiler (more details in section
+        <a class="xref" href="../partintro/toolchaintechnotes.html" title=
+        "Toolchain Technical Notes">Toolchain Technical Notes</a>). In order
+        to separate this cross-compiler from the other programs, it will be
+        installed in a special directory. Create this directory with:
+      </p>
+      <pre class="userinput"><kbd class=
+      "command">mkdir -pv $LFS/tools</kbd></pre>
+    </div>
+    <div class="navfooter">
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="introduction.html" title=
+          "Introduction">Prev</a>
+          <p>
+            Introduction
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="addinguser.html" title=
+          "Adding the LFS User">Next</a>
+          <p>
+            Adding the LFS User
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter04.html" title=
+          "Chapter&nbsp;4.&nbsp;Final Preparations">Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

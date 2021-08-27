@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content=
+    "application/xhtml+xml; charset=iso-8859-1" />
+    <title>
+      8.78.&nbsp;Cleaning Up
+    </title>
+    <link rel="stylesheet" type="text/css" href="../stylesheets/lfs.css" />
+    <meta name="generator" content="DocBook XSL-NS Stylesheets Vsnapshot" />
+    <link rel="stylesheet" href="../stylesheets/lfs-print.css" type=
+    "text/css" media="print" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body class="lfs" id="lfs-11.0-rc3">
+    <div class="navheader">
+      <h4>
+        Linux From Scratch - Version 11.0-rc3
+      </h4>
+      <h3>
+        Chapter&nbsp;8.&nbsp;Installing Basic System Software
+      </h3>
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="stripping.html" title="Stripping">Prev</a>
+          <p>
+            Stripping
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="../chapter09/chapter09.html" title=
+          "System Configuration">Next</a>
+          <p>
+            System Configuration
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter08.html" title=
+          "Chapter&nbsp;8.&nbsp;Installing Basic System Software">Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <h1 class="sect1">
+        <a id="ch-system-revisedchroot" name=
+        "ch-system-revisedchroot"></a>8.78. Cleaning Up
+      </h1>
+      <p>
+        Finally, clean up some extra files left around from running tests:
+      </p>
+      <pre class="userinput"><kbd class="command">rm -rf /tmp/*</kbd></pre>
+      <p>
+        Now log out and reenter the chroot environment with an updated chroot
+        command. From now on, use this updated chroot command any time you
+        need to reenter the chroot environment after exiting:
+      </p>
+      <pre class="userinput"><kbd class="command">logout
+
+chroot "$LFS" /usr/bin/env -i          \
+    HOME=/root TERM="$TERM"            \
+    PS1='(lfs chroot) \u:\w\$ '        \
+    PATH=/usr/bin:/usr/sbin            \
+    /bin/bash --login</kbd></pre>
+      <p>
+        Here the <em class="parameter"><code>+h</code></em> option is not
+        used anymore, since all the previous programs have been replaced:
+        hashing is therefore possible.
+      </p>
+      <p>
+        If the virtual kernel file systems have been unmounted, either
+        manually or through a reboot, ensure that the virtual kernel file
+        systems are mounted when reentering the chroot. This process was
+        explained in <a class="xref" href=
+        "../chapter07/kernfs.html#ch-tools-bindmount" title=
+        "7.3.2.&nbsp;Mounting and Populating /dev">Section&nbsp;7.3.2,
+        &ldquo;Mounting and Populating /dev&rdquo;</a> and <a class="xref"
+        href="../chapter07/kernfs.html#ch-tools-kernfsmount" title=
+        "7.3.3.&nbsp;Mounting Virtual Kernel File Systems">Section&nbsp;7.3.3,
+        &ldquo;Mounting Virtual Kernel File Systems&rdquo;</a>.
+      </p>
+      <p>
+        There are also several files installed in the /usr/lib and
+        /usr/libexec directories with a file name extension of .la. These are
+        "libtool archive" files. As already said, they are only useful when
+        linking with static libraries. They are unneeded, and potentially
+        harmful, when using dynamic shared libraries, specially when using
+        also non-autotools build systems. To remove them, run:
+      </p>
+      <pre class="userinput"><kbd class=
+      "command">find /usr/lib /usr/libexec -name \*.la -delete</kbd></pre>
+      <p>
+        For more information about libtool archive files, see the <a class=
+        "ulink" href=
+        "https://www.linuxfromscratch.org/blfs/view/svn//introduction/la-files.html">
+        BLFS section "About Libtool Archive (.la) files"</a>.
+      </p>
+      <p>
+        The compiler built in <a class="xref" href=
+        "../chapter06/chapter06.html" title=
+        "Chapter&nbsp;6.&nbsp;Cross Compiling Temporary Tools">Chapter&nbsp;6</a>
+        and <a class="xref" href="../chapter07/chapter07.html" title=
+        "Chapter&nbsp;7.&nbsp;Entering Chroot and Building Additional Temporary Tools">
+        Chapter&nbsp;7</a> is still partially installed and not needed
+        anymore. Remove it with:
+      </p>
+      <pre class="userinput"><kbd class=
+      "command">find /usr -depth -name $(uname -m)-lfs-linux-gnu\* | xargs rm -rf</kbd></pre>
+      <p>
+        Finally, remove the temporary 'tester' user account created at the
+        beginning of the previous chapter.
+      </p>
+      <pre class="userinput"><kbd class=
+      "command">userdel -r tester</kbd></pre>
+    </div>
+    <div class="navfooter">
+      <ul>
+        <li class="prev">
+          <a accesskey="p" href="stripping.html" title="Stripping">Prev</a>
+          <p>
+            Stripping
+          </p>
+        </li>
+        <li class="next">
+          <a accesskey="n" href="../chapter09/chapter09.html" title=
+          "System Configuration">Next</a>
+          <p>
+            System Configuration
+          </p>
+        </li>
+        <li class="up">
+          <a accesskey="u" href="chapter08.html" title=
+          "Chapter&nbsp;8.&nbsp;Installing Basic System Software">Up</a>
+        </li>
+        <li class="home">
+          <a accesskey="h" href="../index.html" title=
+          "Linux From Scratch - Version 11.0-rc3 ">Home</a>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
